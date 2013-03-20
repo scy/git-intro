@@ -1,0 +1,11 @@
+@page {
+	size: a4 landscape;
+}
+
+.deck-container > section {
+	page-break-after: always;
+}
+
+.deck-container > section:last-of-type {
+	page-break-after: auto;
+}
