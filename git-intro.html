@@ -18,10 +18,55 @@
 <body class="deck-container">
 	<section><h1>Git Introduction</h1></section>
 
-	<section><h2>Slide 1</h2>
+	<section><h2>The big difference</h2>
+	<ul>
+		<li>Git is <em>distributed</em></li>
+		<li>designed with offline work in mind</li>
+		<li>can handle teams that sync only sporadically</li>
+		<li>allows you to use version control even if the project's owner won't give you write access</li>
+		<li>but <em>how?</em></li>
+	</ul><ul class="slide">
+		<li>every working copy is a complete repository and contains all the history</li>
+		<li>when you commit, this is completely local to your machine</li>
+		<li>your changes are published in a separate step (usually a <code>git push</code> to a central server)</li>
+	</ul></section>
+
+	<section><h2>Flexible workflows</h2>
+	<ul>
+		<li>Git can be used without a central server</li>
+		<li>commits can be exchanged via SSH, HTTP, email, thumb drive, carrier pigeon or any other method</li>
+		<li>you <em>can</em> use a central server, but only by convention:</li>
+		<li>every developer has a copy of the history; if the central server goes down, every team member can become or set up the new server</li>
+		<li>most people use Git in this centralistic way, just like Subversion</li>
+		<li>so why use Git at all?</li>
+		<li class="slide">because it <em>rocks</em>, and you'll soon see why</li>
+	</ul></section>
+
+	<section><h1>Technical differences</h1></section>
+
+	<section><h2>Commit IDs</h2>
+	<ul>
+		<li>since Git is decentralized, there are no "running"/"incrementing" revision numbers</li>
+		<li>instead, every commit has a 40 hex digits SHA1 hash identifying it</li>
+		<li>e.g. <code>bb01ff19b9a79639b0845e3ce5e9af7e5941c334</code>, often abbreviated to the first 7 characters (<code>bb01ff1</code>)</li>
+		<li>Git will accept abbreviated hashes if they are unambigious and at least 4 characters long</li>
+		<li>the hash is built over the commit metadata (author, date, message), complete repository tree and hash of the parent (read: previous) commit(s)</li>
+		<li>a commit ID therefore specifies a complete repository, including history, at a specific point in time</li>
+		<li>changing <em>anything</em> will produce a completely different hash</li>
+	</ul>
 	</section>
 
-	<section><h2>Slide 2</h2>
+	<section><h2>Authorship</h2>
+	<ul>
+		<li>in Subversion, every commit belongs to an author, identified by her/his user name</li>
+		<li>in Git, there is no central entity to identify the user</li>
+		<li>author metadata and access control are completely separate</li>
+		<li>you have to configure your author information on your own:</li>
+	</ul>
+	<pre><code class="bash">
+git config --global user.name 'Harry Wijnvoord'
+git config --global user.email 'harry.wijnvoord@example.com'
+	</code></pre>
 	</section>
 
 	<script src="highlight.js/highlight.pack.js"></script>
