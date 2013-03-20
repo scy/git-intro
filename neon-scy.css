@@ -3,3 +3,7 @@
 .deck-container, .deck-container .slide blockquote cite {
 	color: #ddd;
 }
+
+em {
+	color: #eee;
+}
