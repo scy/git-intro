@@ -51,7 +51,8 @@
 		<li>instead, every commit has a 40 hex digits SHA1 hash identifying it</li>
 		<li>e.g. <code>bb01ff19b9a79639b0845e3ce5e9af7e5941c334</code>, often abbreviated to the first 7 characters (<code>bb01ff1</code>)</li>
 		<li>Git will accept abbreviated hashes if they are unambigious and at least 4 characters long</li>
-		<li>the hash is built over the commit metadata (author, date, message), complete repository tree and hash of the parent (read: previous) commit(s)</li>
+		<li>the hash is built over the commit metadata (author, date, message), complete repository tree and hash of the parent commit</li>
+		<li>(merge commits have more than one parent)</li>
 		<li>a commit ID therefore specifies a complete repository, including history, at a specific point in time</li>
 		<li>changing <em>anything</em> will produce a completely different hash</li>
 	</ul>
@@ -68,6 +69,145 @@
 git config --global user.name 'Harry Wijnvoord'
 git config --global user.email 'harry.wijnvoord@example.com'
 	</code></pre>
+	</section>
+
+	<section><h2>A step in between: staging</h2>
+	<ul>
+		<li>when you do a <code>svn commit</code>, all changed files will be committed</li>
+		<li><code>git commit</code> only commits things that you have <em>staged</em></li>
+		<li>(there is <code>git commit -a</code> which basically does the same thing as <code>svn commit</code>)</li>
+		<li>choose which changes to commit using <code>git add $files</code> (even if they are already tracked) or <code>git rm $files</code></li>
+		<li>or use <code>git add -p</code> like I nearly always do (we'll talk about that in a minute)</li>
+	</ul>
+	</section>
+
+	<section><h1>Basic usage</h1></section>
+
+	<section><h2>GUIs? Who needs GUIs?</h2>
+	<ul>
+		<li>I'm going to demonstrate Git's command-line interface</li>
+		<li>in contrast to Subversion's, it doesn't suck</li>
+		<li>you don't have to use a GUI to stay sane, but if you want to, some recommendations:<ul>
+			<li>Windows: <a href="https://code.google.com/p/tortoisegit/">TortoiseGit</a>, <a href="http://www.sourcetreeapp.com/">SourceTree</a></li>
+			<li>Mac: <a href="http://www.sourcetreeapp.com/">SourceTree</a>, <a href="http://www.git-tower.com/">Tower</a></li>
+			<li>Linux: <a href="https://www.kernel.org/pub/software/scm/git/docs/git-gui.html">git gui</a>, <a href="https://git.gnome.org/browse/gitg/">gitg</a></li>
+		</ul></li>
+	</ul>
+	</section>
+
+	<section><h2>Creating a repository</h2>
+	<ul>
+		<li><code>git init</code></li>
+		<li>That's it.</li>
+	</ul><ul class="slide">
+		<li>Git will create a <code>.git</code> directory in the current directory and put some basic stuff there</li>
+		<li>now your directory is a working copy</li>
+		<li>remember: in Git, a working copy* contains all the history as well</li>
+	</ul><ul class="slide">
+		<li>* usually (except for <em>shallow clones</em>)</li>
+		<li>(and then there's <em>bare repositories</em> which only contain history, but no checked out files to work with)</li>
+	</ul>
+	</section>
+
+	<section><h2>Cloning a repository</h2>
+	<pre><code class="bash">
+git clone 'ssh://user@host/repository.git'    # (SSH)
+git clone 'https://user@host/repository.git'  # (HTTP)
+	</code></pre>
+	<ul>
+		<li>this is basically <code>svn checkout</code>, but called <em>clone</em> because it contains the complete history</li>
+		<li>it will set up a <em>remote</em> named <code>origin</code> where you can <em>pull</em> from and <em>push</em> to</li>
+		<li><em>remote</em> is Git's name for "another repository to interact with", which <em>can</em> be a central server, but it doesn't <em>have</em> to be</li>
+		<li><em>pull</em> is the act of getting commits from a remote, <em>push</em> is the act of putting your changes into one</li>
+	</ul>
+	</section>
+
+	<section><h2>The first commit</h2>
+	<pre><code class="bash">
+echo 'Hey' &gt; file.txt
+git add file.txt
+git commit -m 'Added first file'
+	</code></pre>
+	<p>The last command will make Git output a confirmation:</p>
+	<pre><code class="no-highlight">
+[master (root-commit) 3a56fa1] Added first file
+ 1 file changed, 1 insertion(+)
+ create mode 100644 file.txt
+	</code></pre>
+	<p>Now, let's play around with that a bit.</p>
+	</section>
+
+	<section><h1><div class="repeat-animation tada">Demo Time!</div></h1></section>
+
+	<section><h2>What you've seen in the demo</h2>
+	<ul>
+		<li><code>git status</code> for checking the status of your working copy</li>
+		<li><code>git diff</code> for seeing the textual differences</li>
+		<li>that you have to use <code>git add</code> even for files which are already tracked</li>
+		<li><code>git log -p</code> to see a detailed log</li>
+		<li><code>git rm</code> for deleting files</li>
+		<li>that files you don't <code>add</code> won't be commited</li>
+		<li>the power of <code>git add -p</code> to interactively select what to commit</li>
+	</ul>
+	</section>
+
+	<section><h1>Branching and merging</h1></section>
+
+	<section><h2>Branching</h2>
+	<ul>
+		<li>in Git, branches are simply pointers to a commit</li>
+		<li>(unlike tags they are moved automatically when you add a new commit)</li>
+		<li>create one with <code>git branch foo</code></li>
+		<li>switch branches with <code>git checkout foo</code></li>
+		<li>use <code>git checkout -b foo</code> to create and checkout with a single command</li>
+		<li>the default branch (<em>trunk</em> in Subversion) is called <em>master</em> in Git</li>
+	</ul>
+	</section>
+
+	<section><h2>Merging</h2>
+	<ul>
+		<li>checkout the branch that you want to merge into and say <code>git merge foo</code> to merge <em>foo</em> into that branch</li>
+		<li>Git does intelligent merge tracking, so you don't need to select which revisions to merge</li>
+		<li>if you have conflicts, <code>git status</code> will always tell you what to do next</li>
+	</ul>
+	</section>
+
+	<section><h2>Getting a clean working copy, NOW</h2>
+	<ul>
+		<li>use <code>git stash</code> to move all uncommitted changes to a hidden stack</li>
+		<li>this is handy in all kinds of situations, e.g. when you need to do a hotfix</li>
+		<li>use <code>git stash pop</code> to apply the most recent stash to your working copy</li>
+		<li>stashes are local to the branch they were created on</li>
+	</ul>
+	</section>
+
+	<section><h1>Advanced usage<br />(if we have time)</h1></section>
+
+	<section><h2>Selecting changes</h2>
+	<ul>
+		<li>the <code>e</code> command of <code>git add -p</code> for committing things that aren't there</li>
+		<li><code>git checkout -p</code> for selectively reverting things</li>
+	</ul>
+	</section>
+
+	<section><h2>Changing history</h2>
+	<ul>
+		<li><code>git rebase -i</code> for reordering, joining, splitting and dropping commits</li>
+		<li><code>git checkout -p</code> for selectively reverting things</li>
+	</ul>
+	</section>
+
+	<section><h2>Talking to Subversion</h2>
+	<ul>
+		<li><code>git svn</code> for two-way interactions with Subversion repositories</li>
+	</ul>
+	</section>
+
+	<section><h2>Finding bugs</h2>
+	<ul>
+		<li><code>git bisect</code> for quickly or even automatically finding out which commit introduced a bug</li>
+		<li><code>git log -S</code> to search for strings in commits</li>
+	</ul>
 	</section>
 
 	<script src="highlight.js/highlight.pack.js"></script>
