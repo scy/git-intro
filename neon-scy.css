@@ -13,3 +13,8 @@ em {
 	border: none;
 	border-left: 0.2em solid #f0a;
 }
+
+.deck-container > .slide .slide:not(.fadeout).deck-before,
+.deck-container > .slide .slide:not(.fadeout).deck-previous {
+	opacity: 1;
+}
