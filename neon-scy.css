@@ -18,3 +18,7 @@ em {
 .deck-container > .slide .slide:not(.fadeout).deck-previous {
 	opacity: 1;
 }
+
+.deck-current .repeat-animation {
+	-webkit-animation-iteration-count: infinite;
+}
